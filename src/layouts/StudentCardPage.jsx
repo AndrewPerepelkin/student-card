@@ -29,7 +29,10 @@ const StudentCardPage = () => {
             <div><span className='font-bold'>Год рождения: </span>{data.bYear + ` (${getYaers(data.bYear)})`}</div>
             <div>
               <span className='font-bold'>Портфолио: </span>
-              <a href={data.portfolio}>
+              <a
+                href={data.portfolio}
+                className='hover:underline text-gray-600'
+               >
               {data.portfolio}</a>
             </div>
           </div>
