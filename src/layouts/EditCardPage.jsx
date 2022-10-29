@@ -1,30 +1,48 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
+import { Link } from 'react-router-dom';
 import Modal from '../componets/common.jsx/Modal';
 import EditMessage from '../componets/EditMessage';
 import InputField from '../componets/forms/InputField';
+import { CardContext } from '../context/CardContext';
 import { validator } from '../utils/validator';
 
-const EditCardPage = ({card}) => {
-  let initialData;
+const EditCardPage = () => {
+  const { card, createCard, deleteCard } = useContext(CardContext);
 
-  // const initialData = JSON.parse(localStorage.getItem('data'));
+  const [initialData, setInitialData] = useState();
+  useEffect(() => {
+    setInitialData(JSON.parse(localStorage.getItem('data')));
+  }, []);
   const [data, setData] = useState({ firstName: '', secondName: '', bYear: '', portfolio: '' });
   const [modal, setModal] = useState(false)
   console.log(initialData);
-  // if (initialData) 
+  useEffect(() => {
+    if (card && initialData) {
+      setData(initialData);
+    }
+  }, [card, initialData])
+  
   
   const [errors, setErrors] = useState({});
 
   const onChangeHandler = ({ target }) => {
     setData(prev => ({ ...prev, [target.name]: target.value }));
-    // localStorage.setItem(target.name, target.value);
   };
 
   const onCreateHandler = () => {
     localStorage.setItem('data', JSON.stringify(data));
-    setModal(true)
+    setModal(true);
+    createCard();
   }
-  const closeModal = () => { setModal(false) }
+  const closeModal = () => {
+    setModal(false);
+  }
+
+  const onDeleteHandler = () => {
+    localStorage.removeItem('data');
+    setModal(true);
+    deleteCard()
+  }
 
   useEffect(() => {
     validate();
@@ -69,7 +87,7 @@ const EditCardPage = ({card}) => {
 
   return (
     <div className='container mx-auto max-w-2xl pt-5'>
-      <h1 className='mb-2 text-center font-bold text-xl'>Создание карточки</h1>
+      <h1 className='mb-2 text-center font-bold text-xl'>{(card ? 'Изменение' : 'Создание') + ' карточки'}</h1>
       <div className="flex flex-col">
         <InputField
         label='Имя'
@@ -108,9 +126,13 @@ const EditCardPage = ({card}) => {
         error={errors.portfolio}
       />
       </div>
-      <div><button disabled={Object.keys(errors).length !== 0} onClick={onCreateHandler} className='bg-blue-500 px-4 py-2 rounded hover:bg-blue-600'>Создать</button></div>
+      <div className='relative'>
+        {card && <Link to='/' className='bg-gray-400 px-4 py-2 border rounded hover:bg-gray-500 mr-2'>Назад</Link>}
+        <button disabled={Object.keys(errors).length !== 0} onClick={onCreateHandler} className='bg-blue-400 px-4 py-2 border rounded hover:bg-blue-500'>{card ? 'Редактировать' : 'Создать'}</button>
+        {card && <button onClick={onDeleteHandler} className='bg-red-500 px-4 py-2 border rounded hover:bg-red-400 absolute right-0'>Удалить</button>}
+      </div>
     {modal &&
-    <Modal title='Create a New Product' onClose={closeModal}>
+    <Modal title='Сохранение карточки студента' onClose={closeModal}>
       <EditMessage />
     </Modal>}
     </div>

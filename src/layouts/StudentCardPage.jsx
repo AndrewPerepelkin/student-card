@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext} from 'react';
 import { Link } from 'react-router-dom';
+import { CardContext } from '../context/CardContext';
 
 const StudentCardPage = () => {
-  const [card,] = useState(false);
+  const { card, createCard } = useContext(CardContext);
+  const data = (JSON.parse(localStorage.getItem('data')));
+  if (data) createCard();
+  console.log(data);
   const getYaers = (year) => {
     const years = ((new Date()).getFullYear() - year).toString();
     if (years.endsWith('1')) return years + ' год';
@@ -20,21 +24,21 @@ const StudentCardPage = () => {
       {card ? (
         <>
           <div className='mb-5'>
-            <div><span className='font-bold'>Имя: </span>{localStorage.getItem('firstName')}</div>
-            <div><span className='font-bold'>Фамилия: </span>{localStorage.getItem('secondName')}</div>
-            <div><span className='font-bold'>Год рождения: </span>{localStorage.getItem('bYear') + ` (${getYaers(localStorage.getItem('bYear'))})`}</div>
+            <div><span className='font-bold'>Имя: </span>{data.firstName}</div>
+            <div><span className='font-bold'>Фамилия: </span>{data.secondName}</div>
+            <div><span className='font-bold'>Год рождения: </span>{data.bYear + ` (${getYaers(data.bYear)})`}</div>
             <div>
               <span className='font-bold'>Портфолио: </span>
-              <a href={localStorage.getItem('portfolio')}>
-              {localStorage.getItem('portfolio')}</a>
+              <a href={data.portfolio}>
+              {data.portfolio}</a>
             </div>
           </div>
-          <Link role='button' to='/edit' className='bg-blue-500 px-4 py-2 rounded hover:bg-blue-600'>Редактировать</Link>
+          <Link role='button' to='/edit' className='bg-blue-400 px-4 py-2 rounded hover:bg-blue-500'>Редактировать</Link>
         </>
       ) : (
         <>
             <div className='mb-5'>Нет данных</div>
-            <div><Link role='button' to='/edit' className='bg-blue-500 px-4 py-2 rounded hover:bg-blue-600'>Создать</Link></div>
+            <div><Link role='button' to='/edit' className='bg-blue-400 px-4 py-2 rounded hover:bg-blue-500'>Создать</Link></div>
         </>
       )}
     </div>
